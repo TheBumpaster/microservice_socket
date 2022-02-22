@@ -1,7 +1,7 @@
 config:
   target: "ws://localhost:3002"
   phases:
-    - duration: 300
+    - duration: 60
       arrivalRate: 10
       name: Load Phase
   engines:
