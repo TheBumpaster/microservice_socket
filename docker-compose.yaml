@@ -1,0 +1,31 @@
+version: "3"
+
+services:
+  prometheus:
+    container_name: "microservice-metrics"
+    image: prom/prometheus
+    ports:
+      - "9090:9090" 
+    networks:
+      - microservices
+  socket:
+    env_file: .env
+    container_name: "microservice-socket"
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        NODE: production
+        PORT: ${PORT}
+    environment:
+      - 'PORT=${PORT}'
+    ports:
+      - "${PORT}:${PORT}"
+    restart: 'always'
+    command: npm run start
+    networks:
+      - microservices
+
+networks:
+  microservices:
+    external: true

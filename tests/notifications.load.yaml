@@ -1,0 +1,37 @@
+config:
+  target: "ws://localhost:3002"
+  phases:
+    - duration: 300
+      arrivalRate: 10
+      name: Load Phase
+  engines:
+    socketio-v3:
+      path: /socket.io
+      transports: [ "websocket" ]
+  plugins:
+    publish-metrics:
+      - type: prometheus
+        pushgateway: "http://localhost:9090"
+        tags:
+          - "testId:notifications"
+          - "type:load"
+
+scenarios:
+  - name: "A system user info notification"
+    engine: "socketio-v3"
+    flow:
+      - emit:
+          channel: "info"
+          namespace: "notifications"
+          data: { sendToEvent: "info_results", type: "user" }
+          acknowledge:
+            match:
+              json: "username"
+              value: "root"
+  - name: "A system cpu info notification"
+    engine: "socketio-v3"
+    flow:
+      - emit:
+          channel: "info"
+          namespace: "notifications"
+          data: { sendToEvent: "info_results", type: "cpu" }
